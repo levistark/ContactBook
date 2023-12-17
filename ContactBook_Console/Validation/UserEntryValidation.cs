@@ -15,7 +15,6 @@ public class UserEntryValidation
             if (userEntry == "q")
             {
                 valid = true;   
-                return "q";
             }
             else if (userEntry == "")
             {

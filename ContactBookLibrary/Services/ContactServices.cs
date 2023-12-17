@@ -29,7 +29,7 @@ public class ContactServices : IContactServices
         }
     }
 
-    public ServiceResult ShowContacts()
+    public ServiceResult GetContacts()
     {
         try
         {
@@ -53,11 +53,25 @@ public class ContactServices : IContactServices
         }
     }
 
-    public ServiceResult GetContact(string email)
+    public ServiceResult GetContact(string contactListIndex)
     {
         try
         {
-            return new ServiceResult() { };
+            // Try to convert string to int using int.TryParse
+            if (int.TryParse(contactListIndex, out int index))
+            {
+                return new ServiceResult() 
+                { 
+                    Result = _contacts[index],
+                    Status = Enums.ServiceStatus.SUCCESS
+                };
+            }
+            else
+            {
+                Console.WriteLine("The user entry is not a valid integer.");
+                return new ServiceResult() { Status = Enums.ServiceStatus.FAILED };
+
+            }
         }
 
         catch (Exception ex)
@@ -67,11 +81,28 @@ public class ContactServices : IContactServices
         }
     }
 
-    public ServiceResult UpdateContact(string email)
+    public ServiceResult UpdateContact(IContact contact)
     {
         try
         {
-            return new ServiceResult() { };
+            var existingContact = _contacts.Find(c => c.Id == contact.Id);
+
+            if (existingContact != null)
+            {
+                // Update the existing contact
+                existingContact.FirstName = contact.FirstName;
+                existingContact.LastName = contact.LastName;
+                existingContact.Email = contact.Email;
+                existingContact.Phone = contact.Phone;
+                existingContact.Address = contact.Address;
+
+                return new ServiceResult() { Status = Enums.ServiceStatus.UPDATED };
+            }
+            else
+            {
+                // Contact not found
+                return new ServiceResult() { Status = Enums.ServiceStatus.NOT_FOUND };
+            }
         }
 
         catch (Exception ex)
@@ -81,11 +112,12 @@ public class ContactServices : IContactServices
         }
     }
 
-    public ServiceResult DeleteContact(string email)
+    public ServiceResult DeleteContact(IContact contact)
     {
         try
         {
-            return new ServiceResult() { };
+            _contacts.Remove(contact);
+            return new ServiceResult() { Status = Enums.ServiceStatus.DELETED };
         }
 
         catch (Exception ex)
