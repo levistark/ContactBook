@@ -67,7 +67,6 @@ public class ViewServices
                 }
             }
 
-            Blank();
             Write("Select contact list nr: ");
 
             var validatedEntry = _validation.ValidateUserEntry(Console.ReadLine()!);

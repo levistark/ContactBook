@@ -1,6 +1,8 @@
 ﻿using ContactBookLibrary.Interfaces;
 using ContactBookLibrary.Models.Responses;
+using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace ContactBookLibrary.Services;
 
@@ -8,7 +10,14 @@ public class ContactServices : IContactServices
 {
     private List<IContact> _contacts = [];
 
-    public ServiceResult AddContact(IContact contact)
+    FileService _fileService = new FileService(@"C:\VSProjects\content.json");
+
+    JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+    {
+        TypeNameHandling = TypeNameHandling.Objects
+    };
+
+    public IServiceResult AddContact(IContact contact)
     {
         try
         {
@@ -19,41 +28,64 @@ public class ContactServices : IContactServices
                 return new ServiceResult() { Status = Enums.ServiceStatus.FAILED };
             
             _contacts.Add(contact);
-            return new ServiceResult() { Status = Enums.ServiceStatus.CREATED };    
+
+            var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings));
+
+            if (fileSaveResult.Status == Enums.ServiceStatus.CREATED)
+                return new ServiceResult() { Status = Enums.ServiceStatus.CREATED };
+            else
+                return new ServiceResult() { Status = Enums.ServiceStatus.FAILED };
         }
 
         catch (Exception ex) 
         {
-            Debug.WriteLine(ex);
+            Debug.WriteLine(ex.Message);
             return new ServiceResult() { Status = Enums.ServiceStatus.FAILED};
         }
     }
 
-    public ServiceResult GetContacts()
+    public IServiceResult GetContacts()
     {
         try
         {
-            if (_contacts.Any())
+            var content = _fileService.GetContentFromFile();
+
+            if (content.Result != null)
             {
+                if (content.Result is string json)
+                _contacts = JsonConvert.DeserializeObject<List<IContact>>(json, jsonSerializerSettings)!;
+
                 return new ServiceResult()
                 {
                     Result = _contacts,
                     Status = Enums.ServiceStatus.SUCCESS
                 };
             }
-            else
-                return new ServiceResult() { Status = Enums.ServiceStatus.NOT_FOUND };
+
+            return new ServiceResult() { Status = Enums.ServiceStatus.NOT_FOUND };
+
+
+            //if (_contacts.Any())
+            //{
+            //    return new ServiceResult()
+            //    {
+            //        Result = _contacts,
+            //        Status = Enums.ServiceStatus.SUCCESS
+            //    };
+            //}
+            //else
+            //    return new ServiceResult() { Status = Enums.ServiceStatus.NOT_FOUND };
 
         }
 
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
+            Debug.WriteLine(ex.Message);
             return new ServiceResult() { Status = Enums.ServiceStatus.FAILED };
         }
     }
 
-    public ServiceResult GetContact(string contactListIndex)
+    public IServiceResult GetContact(string contactListIndex)
     {
         try
         {
@@ -76,12 +108,12 @@ public class ContactServices : IContactServices
 
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
+            Debug.WriteLine(ex.Message);
             return new ServiceResult() { Status = Enums.ServiceStatus.FAILED };
         }
     }
 
-    public ServiceResult UpdateContact(IContact contact)
+    public IServiceResult UpdateContact(IContact contact)
     {
         try
         {
@@ -107,12 +139,12 @@ public class ContactServices : IContactServices
 
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
+            Debug.WriteLine(ex.Message);
             return new ServiceResult() { Status = Enums.ServiceStatus.FAILED };
         }
     }
 
-    public ServiceResult DeleteContact(IContact contact)
+    public IServiceResult DeleteContact(IContact contact)
     {
         try
         {

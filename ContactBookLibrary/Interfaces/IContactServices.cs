@@ -4,9 +4,9 @@ namespace ContactBookLibrary.Interfaces;
 
 public interface IContactServices
 {
-    ServiceResult AddContact(IContact contact);
-    ServiceResult DeleteContact(IContact contact);
-    ServiceResult GetContact(string email);
-    ServiceResult GetContacts();
-    ServiceResult UpdateContact(IContact contact);
+    IServiceResult AddContact(IContact contact);
+    IServiceResult DeleteContact(IContact contact);
+    IServiceResult GetContact(string email);
+    IServiceResult GetContacts();
+    IServiceResult UpdateContact(IContact contact);
 }
