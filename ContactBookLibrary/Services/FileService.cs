@@ -37,7 +37,7 @@ public class FileService(string filePath) : IFileService
                 sw.WriteLine(content);
             }
 
-            return new ServiceResult() { Status = Enums.ServiceStatus.CREATED };
+            return new ServiceResult() { Status = Enums.ServiceStatus.UPDATED };
         }
 
         catch (Exception ex)
@@ -45,6 +45,5 @@ public class FileService(string filePath) : IFileService
             Debug.WriteLine(ex.Message);
             return new ServiceResult() { Status = Enums.ServiceStatus.FAILED };
         }
-
     }
 }

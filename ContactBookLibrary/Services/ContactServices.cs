@@ -1,4 +1,6 @@
-﻿using ContactBookLibrary.Interfaces;
+﻿using ContactBookLibrary.Enums;
+using ContactBookLibrary.Interfaces;
+using ContactBookLibrary.Models;
 using ContactBookLibrary.Models.Responses;
 using Newtonsoft.Json;
 using System.Diagnostics;
@@ -17,30 +19,30 @@ public class ContactServices : IContactServices
         TypeNameHandling = TypeNameHandling.Objects
     };
 
-    public IServiceResult AddContact(IContact contact)
+    public IServiceResult AddContact(Contact contact)
     {
         try
         {
             if (_contacts.Any(existingContact => existingContact.Email == contact.Email))
-                return new ServiceResult() { Status = Enums.ServiceStatus.ALREADY_EXISTS };
+                return new ServiceResult() { Status = ServiceStatus.ALREADY_EXISTS };
 
             if (contact == null)
-                return new ServiceResult() { Status = Enums.ServiceStatus.FAILED };
+                return new ServiceResult() { Status = ServiceStatus.FAILED };
             
             _contacts.Add(contact);
 
             var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings));
 
-            if (fileSaveResult.Status == Enums.ServiceStatus.CREATED)
-                return new ServiceResult() { Status = Enums.ServiceStatus.CREATED };
+            if (fileSaveResult.Status == ServiceStatus.CREATED)
+                return new ServiceResult() { Status = ServiceStatus.CREATED };
             else
-                return new ServiceResult() { Status = Enums.ServiceStatus.FAILED };
+                return new ServiceResult() { Status = ServiceStatus.FAILED };
         }
 
         catch (Exception ex) 
         {
             Debug.WriteLine(ex.Message);
-            return new ServiceResult() { Status = Enums.ServiceStatus.FAILED};
+            return new ServiceResult() { Status = ServiceStatus.FAILED};
         }
     }
 
@@ -58,30 +60,17 @@ public class ContactServices : IContactServices
                 return new ServiceResult()
                 {
                     Result = _contacts,
-                    Status = Enums.ServiceStatus.SUCCESS
+                    Status = ServiceStatus.SUCCESS
                 };
             }
 
-            return new ServiceResult() { Status = Enums.ServiceStatus.NOT_FOUND };
-
-
-            //if (_contacts.Any())
-            //{
-            //    return new ServiceResult()
-            //    {
-            //        Result = _contacts,
-            //        Status = Enums.ServiceStatus.SUCCESS
-            //    };
-            //}
-            //else
-            //    return new ServiceResult() { Status = Enums.ServiceStatus.NOT_FOUND };
-
+            return new ServiceResult() { Status = ServiceStatus.NOT_FOUND };
         }
 
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return new ServiceResult() { Status = Enums.ServiceStatus.FAILED };
+            return new ServiceResult() { Status = ServiceStatus.FAILED };
         }
     }
 
@@ -89,75 +78,122 @@ public class ContactServices : IContactServices
     {
         try
         {
-            // Try to convert string to int using int.TryParse
             if (int.TryParse(contactListIndex, out int index))
             {
                 return new ServiceResult() 
                 { 
                     Result = _contacts[index],
-                    Status = Enums.ServiceStatus.SUCCESS
+                    Status = ServiceStatus.SUCCESS
                 };
             }
             else
             {
                 Console.WriteLine("The user entry is not a valid integer.");
-                return new ServiceResult() { Status = Enums.ServiceStatus.FAILED };
-
+                return new ServiceResult() { Status = ServiceStatus.FAILED };
             }
         }
 
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return new ServiceResult() { Status = Enums.ServiceStatus.FAILED };
+            return new ServiceResult() { Status = ServiceStatus.FAILED };
         }
     }
 
-    public IServiceResult UpdateContact(IContact contact)
+    public IServiceResult UpdateContact(Contact contactToBeUpdated, string newValue, string propertyToChange)
     {
         try
         {
-            var existingContact = _contacts.Find(c => c.Id == contact.Id);
+            // Find the contact to update in list
+            var existingContact = _contacts.Find(c => c.Id == contactToBeUpdated.Id);
 
             if (existingContact != null)
             {
-                // Update the existing contact
-                existingContact.FirstName = contact.FirstName;
-                existingContact.LastName = contact.LastName;
-                existingContact.Email = contact.Email;
-                existingContact.Phone = contact.Phone;
-                existingContact.Address = contact.Address;
+                //Choose which property to change
+                switch (propertyToChange)
+                {
+                    case "1":
+                        existingContact.FirstName = newValue;
+                        break;
+                    case "2":
+                        existingContact.LastName = newValue;
+                        break;
+                    case "3":
+                        existingContact.Email = newValue;
+                        break;
+                    case "4":
+                        existingContact.Phone = newValue;
+                        break;
+                    case "5":
+                        existingContact.Address = newValue;
+                        break;
+                }
 
-                return new ServiceResult() { Status = Enums.ServiceStatus.UPDATED };
+                // Update the file with new list data
+                var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings));
+
+                // Hanlde service results
+                return HandleServiceResult(fileSaveResult);
             }
+
             else
             {
-                // Contact not found
-                return new ServiceResult() { Status = Enums.ServiceStatus.NOT_FOUND };
+                // Contact IDs did not match
+                return new ServiceResult() { Status = ServiceStatus.NOT_FOUND };
             }
         }
-
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return new ServiceResult() { Status = Enums.ServiceStatus.FAILED };
+            return new ServiceResult() { Status = ServiceStatus.FAILED };
         }
     }
 
-    public IServiceResult DeleteContact(IContact contact)
+    public IServiceResult DeleteContact(Contact contact)
     {
         try
         {
+            // Remove contact from contact list
             _contacts.Remove(contact);
-            return new ServiceResult() { Status = Enums.ServiceStatus.DELETED };
+
+            // Update the file with new list data
+            var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings));
+
+            // Hanlde service results
+            return HandleServiceResult(fileSaveResult);
         }
 
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
-            return new ServiceResult() { Status = Enums.ServiceStatus.FAILED };
+            return new ServiceResult() { Status = ServiceStatus.FAILED };
         }
     }
 
+    public IServiceResult HandleServiceResult(IServiceResult result)
+    {
+        switch (result.Status)
+        {
+            case ServiceStatus.SUCCESS:
+                return new ServiceResult() { Status = ServiceStatus.SUCCESS };
 
+            case ServiceStatus.CREATED:
+                return new ServiceResult() { Status = ServiceStatus.CREATED };
+
+            case ServiceStatus.UPDATED:
+                return new ServiceResult() { Status = ServiceStatus.UPDATED };
+
+            case ServiceStatus.FAILED:
+                return new ServiceResult() { Status = ServiceStatus.FAILED };
+
+            case ServiceStatus.NOT_FOUND:
+                return new ServiceResult() { Status = ServiceStatus.NOT_FOUND };
+
+            case ServiceStatus.ALREADY_EXISTS:
+                return new ServiceResult() { Status = ServiceStatus.ALREADY_EXISTS };
+
+            default:
+                return new ServiceResult() { Status = ServiceStatus.DELETED };
+        }
+    }
 }

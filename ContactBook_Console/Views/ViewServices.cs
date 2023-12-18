@@ -1,6 +1,7 @@
 ﻿
 using ContactBook_Console.Navigation;
 using ContactBook_Console.Validation;
+using ContactBookLibrary.Enums;
 using ContactBookLibrary.Interfaces;
 using ContactBookLibrary.Models;
 using ContactBookLibrary.Services;
@@ -24,7 +25,6 @@ public class ViewServices
     public void WriteLine(string text) { Console.WriteLine(text); }
     public void Write(string text) { Console.Write(text); }
     public void Blank() { Console.WriteLine(); }
-    public void DashedLine() { Console.WriteLine("--------------------------"); }
     public void StartMenu()
     {
         Header("Contact Book");
@@ -161,10 +161,11 @@ public class ViewServices
 
         var result = _contactServices.GetContact(contactListIndex);
 
-        if (result.Result is IContact contact)
+        if (result.Result is Contact contact)
         {
             WriteLine("Contact Id: " + contact.Id);
-            WriteLine($"Full name: {contact.FirstName} {contact.LastName}");
+            WriteLine($"First name: {contact.FirstName}");
+            WriteLine($"Last name: {contact.LastName}");
             WriteLine("Email address: " + contact.Email);
             WriteLine("Phone number: " + contact.Phone);
             WriteLine("Address: " + contact.Address);
@@ -208,7 +209,7 @@ public class ViewServices
             PressAnyKey();
         }
     }
-    public void EditContactMenu(IContact contact, string contactListIndex)
+    public void EditContactMenu(Contact contact, string contactListIndex)
     {
         Header("Edit contact");
 
@@ -233,13 +234,11 @@ public class ViewServices
                     Blank();
                     Write("Enter new first name: ");
                     var input = Console.ReadLine();
-                    contact.FirstName = _validation.ValidateUserEntry(input!);
 
-                    Blank();
-                    WriteLine("First name was successfully updated ");
-                    Thread.Sleep(1000);
+                    string validatedInput = _validation.ValidateUserEntry(input!);
+                    var updateResult = _contactServices.UpdateContact(contact, validatedInput, option);
+                    HandleServiceResult(updateResult);
 
-                    ContactDetailsMenu(contactListIndex);
                     valid = true;
                     break;
 
@@ -247,13 +246,11 @@ public class ViewServices
                     Blank();
                     Write("Enter new last name: ");
                     input = Console.ReadLine();
-                    contact.LastName = _validation.ValidateUserEntry(input!);
 
-                    Blank();
-                    WriteLine("Last name was successfully updated ");
-                    Thread.Sleep(1000);
+                    validatedInput = _validation.ValidateUserEntry(input!);
+                    updateResult = _contactServices.UpdateContact(contact, validatedInput, option);
+                    HandleServiceResult(updateResult);
 
-                    ContactDetailsMenu(contactListIndex);
                     valid = true;
                     break;
 
@@ -261,13 +258,11 @@ public class ViewServices
                     Blank();
                     Write("Enter new email: ");
                     input = Console.ReadLine();
-                    contact.Email = _validation.ValidateUserEntry(input!);
 
-                    Blank();
-                    WriteLine("Email was successfully updated ");
-                    Thread.Sleep(1000);
+                    validatedInput = _validation.ValidateUserEntry(input!);
+                    updateResult = _contactServices.UpdateContact(contact, validatedInput, option);
+                    HandleServiceResult(updateResult);
 
-                    ContactDetailsMenu(contactListIndex);
                     valid = true;
                     break;
 
@@ -275,13 +270,11 @@ public class ViewServices
                     Blank();
                     Write("Enter new phone number: ");
                     input = Console.ReadLine();
-                    contact.Phone = _validation.ValidateUserEntry(input!);
 
-                    Blank();
-                    WriteLine("Phone number was successfully updated ");
-                    Thread.Sleep(1000);
+                    validatedInput = _validation.ValidateUserEntry(input!);
+                    updateResult = _contactServices.UpdateContact(contact, validatedInput, option);
+                    HandleServiceResult(updateResult);
 
-                    ContactDetailsMenu(contactListIndex);
                     valid = true;
                     break;
 
@@ -289,13 +282,11 @@ public class ViewServices
                     Blank();
                     Write("Enter new address: ");
                     input = Console.ReadLine();
-                    contact.Address = _validation.ValidateUserEntry(input!);
 
-                    Blank();
-                    WriteLine("Address was successfully updated ");
-                    Thread.Sleep(1000);
+                    validatedInput = _validation.ValidateUserEntry(input!);
+                    updateResult = _contactServices.UpdateContact(contact, validatedInput, option);
+                    HandleServiceResult(updateResult);
 
-                    ContactDetailsMenu(contactListIndex);
                     valid = true;
                     break;
 
@@ -307,10 +298,12 @@ public class ViewServices
                 default:
                     break;
             }
-        }
 
+            Thread.Sleep(1000);
+            ContactDetailsMenu(contactListIndex);
+        }
     }
-    public void DeleteContactMenu(IContact contact, string contactListIndex)
+    public void DeleteContactMenu(Contact contact, string contactListIndex)
     {
         Console.Clear();
         WriteLine($"Are you sure you want to delete {contact.FirstName} {contact.LastName} from the list (y/n)?");
@@ -325,9 +318,9 @@ public class ViewServices
                 case "y":
                     var result = _contactServices.DeleteContact(contact);
 
-                    if (result.Status == ContactBookLibrary.Enums.ServiceStatus.DELETED)
+                    if (result.Status == ServiceStatus.UPDATED)
                     {
-                        Console.Clear();
+                        Blank();
                         WriteLine("Contact was successfully deleted from list.");
                         Thread.Sleep(1000);
                         ShowContactsMenu();
@@ -335,7 +328,7 @@ public class ViewServices
                     }
                     else
                     {
-                        Console.Clear();
+                        Blank();
                         WriteLine("User couldn't be deleted. Please see debug log for more info.");
                         Thread.Sleep(1000);
                         ShowContactsMenu();
@@ -374,6 +367,37 @@ public class ViewServices
     public void Exit()
     {
 
+    }
+    public void HandleServiceResult(IServiceResult serviceResult)
+    {
+        switch (serviceResult.Status)
+        {
+            case ServiceStatus.SUCCESS:
+                Blank();
+                WriteLine("Contact was successfully updated");
+                break;
+
+            case ServiceStatus.CREATED:
+                Blank();
+                WriteLine("Contact was successfully updated");
+                break;
+
+            case ServiceStatus.UPDATED:
+                Blank();
+                WriteLine("Contact was successfully updated");
+                break;
+
+            case ServiceStatus.FAILED:
+                Blank();
+                WriteLine("Something went wrong. Check debug message");
+                break;
+
+            case ServiceStatus.NOT_FOUND:
+                Blank();
+                WriteLine("Not found. Check debug message");
+                break;
+        }
+ 
     }
 
 }
