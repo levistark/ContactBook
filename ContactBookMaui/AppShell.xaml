@@ -6,10 +6,10 @@
     xmlns:local="clr-namespace:ContactBookMaui"
     Shell.FlyoutBehavior="Disabled"
     Title="ContactBookMaui">
-
+    
     <ShellContent
-        Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
+    
 
 </Shell>
