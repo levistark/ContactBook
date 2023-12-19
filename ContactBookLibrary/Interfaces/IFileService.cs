@@ -2,7 +2,7 @@
 {
     public interface IFileService
     {
-        IServiceResult GetContentFromFile();
-        IServiceResult SaveContentToFile(string content);
+        IServiceResult GetContentFromFile(string filePath);
+        IServiceResult SaveContentToFile(string content, string filePath);
     }
 }

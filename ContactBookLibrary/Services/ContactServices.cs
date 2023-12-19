@@ -11,13 +11,10 @@ namespace ContactBookLibrary.Services;
 public class ContactServices : IContactServices
 {
     private List<IContact> _contacts = [];
+    private string filePath = @"C:\VSProjects\content.json";
 
-    FileService _fileService = new FileService(@"C:\VSProjects\content.json");
-
-    JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
-    {
-        TypeNameHandling = TypeNameHandling.Objects
-    };
+    IFileService _fileService = new FileService();
+    JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects };
 
     public IServiceResult AddContact(Contact contact)
     {
@@ -31,7 +28,7 @@ public class ContactServices : IContactServices
             
             _contacts.Add(contact);
 
-            var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings));
+            var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings), filePath);
 
             if (fileSaveResult.Status == ServiceStatus.CREATED)
                 return new ServiceResult() { Status = ServiceStatus.CREATED };
@@ -44,13 +41,13 @@ public class ContactServices : IContactServices
             Debug.WriteLine(ex.Message);
             return new ServiceResult() { Status = ServiceStatus.FAILED};
         }
-    }
+    } 
 
     public IServiceResult GetContacts()
     {
         try
         {
-            var content = _fileService.GetContentFromFile();
+            var content = _fileService.GetContentFromFile(filePath);
 
             if (content.Result != null)
             {
@@ -130,7 +127,7 @@ public class ContactServices : IContactServices
                 }
 
                 // Update the file with new list data
-                var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings));
+                var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings), filePath);
 
                 // Hanlde service results
                 return HandleServiceResult(fileSaveResult);
@@ -157,7 +154,7 @@ public class ContactServices : IContactServices
             _contacts.Remove(contact);
 
             // Update the file with new list data
-            var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings));
+            var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings), filePath);
 
             // Hanlde service results
             return HandleServiceResult(fileSaveResult);

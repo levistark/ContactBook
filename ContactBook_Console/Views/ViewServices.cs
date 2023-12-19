@@ -47,39 +47,41 @@ public class ViewServices
     public void ShowContactsMenu()
     {
         Header("all contacts");
-        
 
         var res = _contactServices.GetContacts();
         
         if (res.Result is List<IContact> list)
         {
-
-            WriteLine("Select a contact by entering their list nr, or enter 'q' to go back");
-            Blank();
-
             if (list.Count > 0)
             {
-                foreach (IContact contact in list)
+                WriteLine("Select a contact by entering their list nr, or enter 'q' to go back");
+                Blank();
+
+                if (list.Count > 0)
                 {
-                    WriteLine("List nr: " + list.IndexOf(contact));
-                    WriteLine($"Full name: {contact.FirstName} {contact.LastName}");
-                    Blank();
+                    foreach (IContact contact in list)
+                    {
+                        WriteLine("List nr: " + list.IndexOf(contact));
+                        WriteLine($"Full name: {contact.FirstName} {contact.LastName}");
+                        Blank();
+                    }
                 }
+
+                Write("Select contact list nr: ");
+
+                var validatedEntry = _validation.ValidateUserEntry(Console.ReadLine()!);
+                if (validatedEntry == "q")
+                    StartMenu();
+                else
+                    ContactDetailsMenu(validatedEntry);
             }
-
-            Write("Select contact list nr: ");
-
-            var validatedEntry = _validation.ValidateUserEntry(Console.ReadLine()!);
-            if (validatedEntry == "q")
-                StartMenu();
             else
-                ContactDetailsMenu(validatedEntry);
+            {
+                WriteLine("No emplyoyees in list.");
+                PressAnyKey();
+            }
         }
-        else
-        {
-            WriteLine("No emplyoyees in list.");
-            PressAnyKey();
-        }
+        
 
 
     }

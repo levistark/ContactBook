@@ -4,17 +4,16 @@ using System.Diagnostics;
 
 namespace ContactBookLibrary.Services;
 
-public class FileService(string filePath) : IFileService
+public class FileService() : IFileService
 {
-    private readonly string _filePath = filePath;
 
-    public IServiceResult GetContentFromFile()
+    public IServiceResult GetContentFromFile(string filePath)
     {
         try
         {
-            if (File.Exists(_filePath))
+            if (File.Exists(filePath))
             {
-                using var sr = new StreamReader(_filePath);
+                using var sr = new StreamReader(filePath);
                 return new ServiceResult() { Status = Enums.ServiceStatus.SUCCESS, Result = sr.ReadToEnd() };
             }
 
@@ -28,11 +27,11 @@ public class FileService(string filePath) : IFileService
         }
     }
 
-    public IServiceResult SaveContentToFile(string content)
+    public IServiceResult SaveContentToFile(string content, string filePath)
     {
         try
         {
-            using (var sw = new StreamWriter(_filePath))
+            using (var sw = new StreamWriter(filePath))
             {
                 sw.WriteLine(content);
             }
