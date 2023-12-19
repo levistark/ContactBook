@@ -14,6 +14,7 @@ namespace ContactBook_Console.Views;
 public class ViewServices
 {
     private ContactServices _contactServices;
+
     public ViewServices(ContactServices contactServices)
     {
         _contactServices = contactServices;
@@ -138,13 +139,13 @@ public class ViewServices
             Address = address
         });
 
-        if (result.Status == ContactBookLibrary.Enums.ServiceStatus.ALREADY_EXISTS)
+        if (result.Status == ServiceStatus.ALREADY_EXISTS)
         {
             Blank();
             WriteLine("A contact with this email address already exists in database. Please add a user with a unique email address.");
             PressAnyKey();
         }
-        else if (result.Status == ContactBookLibrary.Enums.ServiceStatus.CREATED)
+        else if (result.Status == ServiceStatus.CREATED)
         {
             Blank();
             WriteLine("New contact was added to the list.");

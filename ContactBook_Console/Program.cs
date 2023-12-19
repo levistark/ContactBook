@@ -1,6 +1,7 @@
 ﻿
 using ContactBook_Console.Validation;
 using ContactBook_Console.Views;
+using ContactBookLibrary.Interfaces;
 using ContactBookLibrary.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,6 +14,7 @@ internal class Program
     {
         var builder = Host.CreateDefaultBuilder().ConfigureServices(services =>
         {
+            services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<ContactServices>();
             services.AddSingleton<ViewServices>();
             services.AddSingleton<UserEntryValidation>();

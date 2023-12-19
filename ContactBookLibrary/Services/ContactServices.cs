@@ -10,10 +10,17 @@ namespace ContactBookLibrary.Services;
 
 public class ContactServices : IContactServices
 {
-    private List<IContact> _contacts = [];
+    List<IContact> _contacts = [];
+
     private string filePath = @"C:\VSProjects\content.json";
 
-    IFileService _fileService = new FileService();
+    private IFileService _fileService;
+
+    public ContactServices(IFileService fileService)
+    {
+        _fileService = fileService;
+    }
+
     JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects };
 
     public IServiceResult AddContact(Contact contact)
@@ -30,7 +37,7 @@ public class ContactServices : IContactServices
 
             var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings), filePath);
 
-            if (fileSaveResult.Status == ServiceStatus.CREATED)
+            if (fileSaveResult.Status == ServiceStatus.UPDATED)
                 return new ServiceResult() { Status = ServiceStatus.CREATED };
             else
                 return new ServiceResult() { Status = ServiceStatus.FAILED };
@@ -52,7 +59,7 @@ public class ContactServices : IContactServices
             if (content.Result != null)
             {
                 if (content.Result is string json)
-                _contacts = JsonConvert.DeserializeObject<List<IContact>>(json, jsonSerializerSettings)!;
+                    _contacts = JsonConvert.DeserializeObject<List<IContact>>(json, jsonSerializerSettings)!;
 
                 return new ServiceResult()
                 {

@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace ContactBookLibrary.Services;
 
-public class FileService() : IFileService
+public class FileService : IFileService
 {
 
     public IServiceResult GetContentFromFile(string filePath)

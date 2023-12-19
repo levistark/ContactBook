@@ -11,16 +11,31 @@ public class FileServices_Tests
 {
     [Fact]
     public void SaveContentToFile_ShouldSaveContenetToFile_ThenReturnServiceResult()
-    {
+    { 
         // Arrange 
         IFileService fileService = new FileService();
-        string filePath = @"C:\test.txt";
+        string filePath = @"C:\VSProjects\test.txt";
         string content = "Test content";
 
         // Act
-        var result = fileService.SaveContentToFile(filePath, content);
+        var result = fileService.SaveContentToFile(content, filePath);
 
         // Assert
         Assert.True(result.Status == ServiceStatus.UPDATED);
+    }
+
+    [Fact]
+    public void SaveContentToFile_ShouldReturnFalse_IfFilePathNotExists()
+    {
+        // Arrange 
+        IFileService fileService = new FileService();
+        string filePath = @$"C:\{Guid.NewGuid()}\test.txt";
+        string content = "Test content";
+
+        // Act
+        var result = fileService.SaveContentToFile(content, filePath);
+
+        // Assert
+        Assert.False(result.Status == ServiceStatus.UPDATED);
     }
 }
