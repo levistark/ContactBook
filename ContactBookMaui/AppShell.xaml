@@ -9,7 +9,8 @@
     
     <ShellContent
         ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Route="MainPage" 
+        Title="Contact Book"/>
+        
     
-
 </Shell>

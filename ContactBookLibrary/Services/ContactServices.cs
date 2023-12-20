@@ -12,7 +12,7 @@ public class ContactServices : IContactServices
 {
     List<IContact> _contacts = [];
 
-    private string filePath = @"C:\VSProjects\content.json";
+    private readonly string filePath = @"C:\VSProjects\content.json";
 
     private IFileService _fileService;
 
