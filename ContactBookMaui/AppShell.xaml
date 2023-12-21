@@ -5,12 +5,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:ContactBookMaui"
     Shell.FlyoutBehavior="Disabled"
-    Title="ContactBookMaui">
+    Shell.NavBarIsVisible="False"
+    Title="ContactBook"
+    Padding="20,0,20,0"
+    BackgroundColor="#444455"
+    >
     
     <ShellContent
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" 
-        Title="Contact Book"/>
+        Title="Contact Book"
+        />
         
     
 </Shell>

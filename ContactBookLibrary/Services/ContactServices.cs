@@ -157,8 +157,14 @@ public class ContactServices : IContactServices
     {
         try
         {
-            // Remove contact from contact list
-            _contacts.Remove(contact);
+            // Find the existing contact
+            var existingContact = _contacts.Find(c => c.Id == contact.Id); 
+            
+            if (existingContact != null)
+            {
+                // Remove contact from contact list
+                _contacts.Remove(existingContact);
+            }
 
             // Update the file with new list data
             var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings), filePath);
