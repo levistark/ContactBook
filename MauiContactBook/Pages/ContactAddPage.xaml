@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                          x:Class="MauiContactBook.Pages.ContactAddPage"
+
+             xmlns:viewmodels="clr-namespace:MauiContactBook.ViewModels"
+             x:DataType="{x:Type viewmodels:ContactAddViewModel}"
+             
+             Title="ContactAddPage"
+             Shell.NavBarIsVisible="False">
+    
+    <VerticalStackLayout Margin="30">
+        <Label 
+            Text="Add Contact"
+            FontSize="30"
+            FontAttributes="Bold"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" 
+            Margin="0,0,0,20"/>
+
+        <Button Text="All Contacts" Command="{Binding NavigateToListCommand}"/>
+    </VerticalStackLayout>
+</ContentPage>
