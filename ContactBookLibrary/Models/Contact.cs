@@ -1,6 +1,10 @@
 ﻿using ContactBookLibrary.Interfaces;
 
 namespace ContactBookLibrary.Models;
+
+/// <summary>
+/// Detta är kontakt-modellen
+/// </summary>
 public class Contact : IContact
 {
     public Guid Id { get; set; } = Guid.NewGuid();

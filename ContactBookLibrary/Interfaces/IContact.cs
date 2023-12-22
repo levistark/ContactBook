@@ -1,5 +1,9 @@
 ﻿namespace ContactBookLibrary.Interfaces;
 
+/// <summary>
+/// Detta är kontakt-interfacet
+/// </summary>
+/// 
 public interface IContact
 {
     string Address { get; set; }

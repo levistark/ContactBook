@@ -8,7 +8,7 @@
              BackgroundColor="#F9F9F9"
              >
 
-    <ScrollView Padding="0,20,0,0">
+    <ScrollView Padding="20">
         <Grid RowDefinitions="auto, auto, auto, auto, auto" MaximumWidthRequest="500">
 
             <Label Text="Contact Book" Grid.Row="0" FontSize="24" FontAttributes="Bold" HorizontalTextAlignment="Center" Margin="0,10,0,10"/>
@@ -49,11 +49,11 @@
                                 Text="X" 
                                 WidthRequest="40" 
                                 HeightRequest="40" 
+                                Margin="0,0,0,10"
                                 
                                 Command="{Binding DeleteContactFromListCommand, Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}}" 
                                 CommandParameter="{Binding .}"
-/>
-
+                                />
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

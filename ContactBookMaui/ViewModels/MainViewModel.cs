@@ -56,6 +56,17 @@ public partial class MainViewModel : ObservableObject
 
     public void UpdateContactList()
     {
-        ContactList = new ObservableCollection<IContact>((List<IContact>)_contactServices.GetContacts().Result);
+        var listRequest = _contactServices.GetContacts();
+
+        if (listRequest.Result != null)
+        {
+            ContactList = new ObservableCollection<IContact>((List<IContact>)listRequest.Result);
+        }
+        else
+        {
+            ContactList = new ObservableCollection<IContact>();
+        }
     }
+
+    
 }

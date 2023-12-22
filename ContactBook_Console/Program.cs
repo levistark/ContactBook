@@ -12,6 +12,7 @@ internal class Program
 {
     static void Main(string[] args)
     {
+        // Instansiera klasser och services
         var builder = Host.CreateDefaultBuilder().ConfigureServices(services =>
         {
             services.AddSingleton<IFileService, FileService>();
@@ -26,6 +27,7 @@ internal class Program
 
         var viewServices = builder.Services.GetRequiredService<ViewServices>();
 
+        // Ladda upp start-menyn
         viewServices.StartMenu();
     }
 }

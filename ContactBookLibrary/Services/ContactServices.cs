@@ -8,12 +8,19 @@ using System.Linq.Expressions;
 
 namespace ContactBookLibrary.Services;
 
+/// <summary>
+/// ContactServices innehåller alla metoder som läser, eller ändrar kontakt-listan _contacts och påkallar metoder från FileServices. 
+/// </summary>
+
 public class ContactServices : IContactServices
 {
+    // Kontaktlistan
     List<IContact> _contacts = [];
 
+    // Filepath som används vid påkallning av FileService-metoder
     private readonly string filePath = @"C:\VSProjects\content.json";
 
+    // DI av FileServices
     private IFileService _fileService;
 
     public ContactServices(IFileService fileService)
@@ -21,28 +28,40 @@ public class ContactServices : IContactServices
         _fileService = fileService;
     }
 
+    // Sätter inställningarna för JSON-konverteringar
     JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects };
+
+    /// <summary>
+    /// Metod som lägger till kontakter i _contacts, samt sparar ner ändringar till fil via FileServices
+    /// </summary>
 
     public IServiceResult AddContact(Contact contact)
     {
         try
         {
+
+            // Kontrollerar om kontakt är null
+            if (contact == null)
+                return new ServiceResult() { Status = ServiceStatus.FAILED };
+
+            // Kontrollerar om kontakten redan finns i listan
             if (_contacts.Any(existingContact => existingContact.Email == contact.Email))
                 return new ServiceResult() { Status = ServiceStatus.ALREADY_EXISTS };
 
-            if (contact == null)
-                return new ServiceResult() { Status = ServiceStatus.FAILED };
-            
+            // Lägger till kontakt i listan
             _contacts.Add(contact);
 
+            // Sparar ner kontakt till fil via FileServices, samt konverterar om den uppdaterade listan _contacts till JSON-format
             var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings), filePath);
 
+            // Hanterar ServiceResults
             if (fileSaveResult.Status == ServiceStatus.UPDATED)
                 return new ServiceResult() { Status = ServiceStatus.CREATED };
             else
                 return new ServiceResult() { Status = ServiceStatus.FAILED };
         }
 
+        // Hantera exceptions
         catch (Exception ex) 
         {
             Debug.WriteLine(ex.Message);
@@ -50,27 +69,35 @@ public class ContactServices : IContactServices
         }
     } 
 
+    /// <summary>
+    /// Metod som läser och returnerar befintliga kontakter från .json filen via FileServices
+    /// </summary>
     public IServiceResult GetContacts()
     {
         try
         {
+            // Hämta upp JSON-innehållet från filen via FileServices
             var content = _fileService.GetContentFromFile(filePath);
 
+            // Kontrollera ServiceResult
             if (content.Result != null)
             {
+                // Kontrollera resultatet och gör om _contacts till resultatet som ska konverteras till en lista av IContact
                 if (content.Result is string json)
                     _contacts = JsonConvert.DeserializeObject<List<IContact>>(json, jsonSerializerSettings)!;
 
+                // Returnera listan och statuskod
                 return new ServiceResult()
                 {
                     Result = _contacts,
                     Status = ServiceStatus.SUCCESS
                 };
             }
-
+            // Om inte filen hittas från FileServices, till exempel om filePath är inkorrekt.
             return new ServiceResult() { Status = ServiceStatus.NOT_FOUND };
         }
 
+        // Hantera exceptions
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
@@ -78,18 +105,26 @@ public class ContactServices : IContactServices
         }
     }
 
+    /// <summary>
+    /// Metod som hämtar upp en enskild kontakt från listan _contacts via dess index i listan
+    /// </summary>
+
     public IServiceResult GetContact(string contactListIndex)
     {
         try
         {
+            // Konvertera om string till int
             if (int.TryParse(contactListIndex, out int index))
             {
+                // Returnera IContact vid index från _contacts
                 return new ServiceResult() 
                 { 
                     Result = _contacts[index],
                     Status = ServiceStatus.SUCCESS
                 };
             }
+
+            // Om inte string kan konverteras till int 
             else
             {
                 Console.WriteLine("The user entry is not a valid integer.");
@@ -97,6 +132,7 @@ public class ContactServices : IContactServices
             }
         }
 
+        // Hantera exceptions
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
@@ -104,16 +140,24 @@ public class ContactServices : IContactServices
         }
     }
 
+    /// <summary>
+    /// Metod som uppdaterar en kontakt i listan, samt sparar ner ändringar till fil via FileService
+    /// </summary>
+    /// <param name="contactToBeUpdated">Kontakt-objektet som ska uppdateras</param>
+    /// <param name="newValue">Det nya värdet</param>
+    /// <param name="propertyToChange">Vald property som ska uppdateras</param>
+
     public IServiceResult UpdateContact(Contact contactToBeUpdated, string newValue, string propertyToChange)
     {
         try
         {
-            // Find the contact to update in list
+            // Hitta kontakten som ska uppdateras i _contacts, baserat på dess Guid
             var existingContact = _contacts.Find(c => c.Id == contactToBeUpdated.Id);
 
+            // Kontrollera resultatet
             if (existingContact != null)
             {
-                //Choose which property to change
+                // Kontrollera vilken property som ska uppdateras
                 switch (propertyToChange)
                 {
                     case "1":
@@ -133,19 +177,20 @@ public class ContactServices : IContactServices
                         break;
                 }
 
-                // Update the file with new list data
+                // Uppdatera filen med  uppdaterad information från _contacts
                 var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings), filePath);
 
-                // Hanlde service results
+                // Hantera ServiceResult
                 return HandleServiceResult(fileSaveResult);
             }
 
             else
             {
-                // Contact IDs did not match
+                // Om inte kontakten hittas i listan
                 return new ServiceResult() { Status = ServiceStatus.NOT_FOUND };
             }
         }
+        // Hantera exceptions
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
@@ -153,26 +198,30 @@ public class ContactServices : IContactServices
         }
     }
 
+    /// <summary>
+    /// Metod som tar bort en kontakt från listan och uppdaterar fil via FileService
+    /// </summary>
+
     public IServiceResult DeleteContact(Contact contact)
     {
         try
         {
-            // Find the existing contact
+            // Hitta kontakten som ska uppdateras i _contacts, baserat på dess Guid
             var existingContact = _contacts.Find(c => c.Id == contact.Id); 
             
             if (existingContact != null)
             {
-                // Remove contact from contact list
+                // Ta bort kontakt från _contacts
                 _contacts.Remove(existingContact);
             }
 
-            // Update the file with new list data
+            // Uppdatera filen med  uppdaterad information från _contacts
             var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings), filePath);
 
-            // Hanlde service results
+            // Hantera ServiceResult
             return HandleServiceResult(fileSaveResult);
         }
-
+        // Hantera exceptions
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
@@ -180,6 +229,9 @@ public class ContactServices : IContactServices
         }
     }
 
+    /// <summary>
+    /// Metod som hanterar ServiceResults
+    /// </summary>
     public IServiceResult HandleServiceResult(IServiceResult result)
     {
         switch (result.Status)

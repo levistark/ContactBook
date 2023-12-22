@@ -1,4 +1,8 @@
 ﻿namespace ContactBookLibrary.Enums;
+
+/// <summary>
+/// En klass som innehåller en Enum med ServiceStatus-koder
+/// </summary>
 public enum ServiceStatus
 {
     SUCCESS,

@@ -3,6 +3,9 @@ using ContactBookLibrary.Models.Responses;
 
 namespace ContactBookLibrary.Interfaces;
 
+/// <summary>
+/// Detta är ContactServices-interfacet
+/// </summary>
 public interface IContactServices
 {
     IServiceResult AddContact(Contact contact);
