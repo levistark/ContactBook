@@ -1,5 +1,9 @@
-﻿using ContactBookLibrary.Models;
+﻿using ContactBookLibrary.Enums;
+using ContactBookLibrary.Models;
 using ContactBookLibrary.Models.Responses;
+using ContactBookLibrary.Services;
+using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace ContactBookLibrary.Interfaces;
 
@@ -13,4 +17,5 @@ public interface IContactServices
     IServiceResult GetContact(string email);
     IServiceResult GetContacts();
     IServiceResult UpdateContact(Contact contactToBeUpdated, string contactListIndex, string propertyIndex);
+    IServiceResult UpdateContactFully(Contact newContactObject);
 }

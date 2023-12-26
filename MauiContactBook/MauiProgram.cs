@@ -1,4 +1,7 @@
-﻿using MauiContactBook.Pages;
+﻿using ContactBookLibrary.Interfaces;
+using ContactBookLibrary.Services;
+using MauiContactBook.Pages;
+using MauiContactBook.Services;
 using MauiContactBook.ViewModels;
 using Microsoft.Extensions.Logging;
 
@@ -22,9 +25,17 @@ namespace MauiContactBook
 #endif
 
             builder.Services.AddSingleton<ContactListPage>();
-            builder.Services.AddSingleton<ContactAddPage>();
             builder.Services.AddSingleton<ContactListViewModel>();
+
+            builder.Services.AddSingleton<ContactAddPage>();
             builder.Services.AddSingleton<ContactAddViewModel>();
+
+            builder.Services.AddSingleton<ContactEditPage>();
+            builder.Services.AddSingleton<ContactEditViewModel>();
+
+            builder.Services.AddSingleton<ContactServices>();
+            builder.Services.AddSingleton<IFileService, FileService>();
+            builder.Services.AddSingleton<MauiViewServices>();
 
             return builder.Build();
         }

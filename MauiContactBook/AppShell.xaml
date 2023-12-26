@@ -8,7 +8,8 @@
     Title="MauiContactBook">
 
     <ShellContent Title="All Contacts" ContentTemplate="{DataTemplate pages:ContactListPage}" Route="ContactListPage" />
-    <ShellContent Title="Add Contacts" ContentTemplate="{DataTemplate pages:ContactAddPage}" Route="ContactAddPage" />
+    <ShellContent Title="Add Contact" ContentTemplate="{DataTemplate pages:ContactAddPage}" Route="ContactAddPage" />
+    <ShellContent Title="Edit Contact" ContentTemplate="{DataTemplate pages:ContactEditPage}" Route="ContactEditPage" />
 
 
 </Shell>

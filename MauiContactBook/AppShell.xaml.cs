@@ -10,6 +10,7 @@ namespace MauiContactBook
 
             Routing.RegisterRoute(nameof(ContactListPage), typeof(ContactListPage));
             Routing.RegisterRoute(nameof(ContactAddPage), typeof(ContactAddPage));
+            Routing.RegisterRoute(nameof(ContactEditPage), typeof(ContactEditPage));    
 
         }
     }

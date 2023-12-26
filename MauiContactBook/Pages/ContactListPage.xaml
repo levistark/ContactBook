@@ -8,17 +8,36 @@
              
              Title="ContactListPage"
              Shell.NavBarIsVisible="False">
-    
-    <VerticalStackLayout Margin="30">
 
-        <Label 
-            Text="Your Contacts"
-            FontSize="30"
-            FontAttributes="Bold"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" 
-            Margin="0,0,0,20"/>
+        <Grid RowDefinitions="auto,auto" Margin="30">
 
-        <Button Text="Add Contact" Command="{Binding NavigateToAddCommand}"/>
-    </VerticalStackLayout>
+            <Label 
+                Text="Your Contacts"
+                FontSize="30"
+                FontAttributes="Bold"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center" 
+                Margin="0,0,0,20"
+                Grid.Row="0"/>
+                
+
+            <CollectionView Grid.Row="1">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame>
+                            <Grid ColumnDefinitions="*, auto">
+                                <Label Grid.Column="0" Text="..." HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+
+                            <HorizontalStackLayout>
+                                <Button Text="EDIT" CommandParameter="{Binding .}" Command="{Binding NavigateToEditCommand, Source={RelativeSource AncestorType={x:Type viewmodels:ContactListViewModel}}}" Margin="5"/>
+                                <Button Text="DELETE" CommandParameter="{Binding .}" Command="{Binding RemoveCommand, Source={RelativeSource AncestorType={x:Type viewmodels:ContactListViewModel}}}" Margin="5"/>
+                            </HorizontalStackLayout>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Grid.Row="2" Text="Add Contact" Command="{Binding NavigateToAddCommand}"/>
+        </Grid>
 </ContentPage>

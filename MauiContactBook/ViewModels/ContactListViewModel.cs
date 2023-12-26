@@ -6,9 +6,22 @@ namespace MauiContactBook.ViewModels;
 public partial class ContactListViewModel : ObservableObject
 {
     [RelayCommand]
-    private async Task NavigateToAdd()
+    private static async Task NavigateToAdd()
     {
-        await Shell.Current.GoToAsync("//ContactAddPage");
+        await Shell.Current.GoToAsync("ContactAddPage");
+    }
+
+    [RelayCommand]
+    private static async Task NavigateToEdit()
+    {
+        await Shell.Current.GoToAsync("ContactEditPage");
+
+    }
+
+    [RelayCommand]
+    private void Remove()
+    {
+
     }
 
 }

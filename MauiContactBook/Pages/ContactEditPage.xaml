@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MauiContactBook.Pages.ContactAddPage"
-
              xmlns:viewmodels="clr-namespace:MauiContactBook.ViewModels"
-             x:DataType="{x:Type viewmodels:ContactAddViewModel}"
-             
-             Title="ContactAddPage"
+             x:DataType="{x:Type viewmodels:ContactEditViewModel}"
+             x:Class="MauiContactBook.Pages.ContactEditPage"
+             Title="ContactEditPage"
              Shell.NavBarIsVisible="False">
     
-    <VerticalStackLayout Margin="30">
+    <VerticalStackLayout>
         <Label 
-            Text="Add Contact"
+            Text="Edit Contact"
             FontSize="30"
             FontAttributes="Bold"
             VerticalOptions="Center" 
@@ -34,9 +32,10 @@
             <Label Text="Address" FontSize="12" Margin="0,0,0,10" />
             <Entry Placeholder="Address" Margin="0,0,0,10" Text="{Binding Contact.Address}"/>
 
-            <Button Text="Add Contact" Margin="0,0,0,10" Command="{Binding AddContactCommand}"/>
+            <Button Text="Save" Margin="0,0,0,10" Command="{Binding EditContactCommand}"/>
         </VerticalStackLayout>
 
         <Button Text="Go back" Command="{Binding NavigateToListCommand}"/>
+
     </VerticalStackLayout>
 </ContentPage>

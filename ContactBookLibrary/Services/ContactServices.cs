@@ -199,6 +199,59 @@ public class ContactServices : IContactServices
     }
 
     /// <summary>
+    /// Metod som uppdaterar en kontakt i listan, samt sparar ner ändringar till fil via FileService
+    /// </summary>
+    /// <param name="contactToBeUpdated">Kontakt-objektet som ska uppdateras</param>
+    /// <param name="newValue">Det nya värdet</param>
+    /// <param name="propertyToChange">Vald property som ska uppdateras</param>
+
+    public IServiceResult UpdateContactFully(Contact newContactObject)
+    {
+        try
+        {
+            // Hitta kontakten som ska uppdateras i _contacts, baserat på dess Guid
+            var existingContact = _contacts.Find(c => c.Id == newContactObject.Id);
+
+            // Kontrollera resultatet
+            if (existingContact != null)
+            {
+                if (newContactObject.FirstName != "")
+                    existingContact.FirstName = newContactObject.FirstName;
+                
+                if (newContactObject.LastName != "")
+                    existingContact.LastName = newContactObject.LastName;
+
+                if (newContactObject.Email != "")
+                    existingContact.Email = newContactObject.Email;
+                
+                if (newContactObject.Phone != "")
+                    existingContact.Phone= newContactObject.Phone;
+               
+                if (newContactObject.Address != "")
+                    existingContact.Address = newContactObject.Address;
+
+                // Uppdatera filen med  uppdaterad information från _contacts
+                var fileSaveResult = _fileService.SaveContentToFile(JsonConvert.SerializeObject(_contacts, jsonSerializerSettings), filePath);
+
+                // Hantera ServiceResult
+                return HandleServiceResult(fileSaveResult);
+            }
+
+            else
+            {
+                // Om inte kontakten hittas i listan
+                return new ServiceResult() { Status = ServiceStatus.NOT_FOUND };
+            }
+        }
+        // Hantera exceptions
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return new ServiceResult() { Status = ServiceStatus.FAILED };
+        }
+    }
+
+    /// <summary>
     /// Metod som tar bort en kontakt från listan och uppdaterar fil via FileService
     /// </summary>
 
