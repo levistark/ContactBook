@@ -8,7 +8,6 @@ namespace MauiContactBook.ViewModels;
 
 public partial class ContactAddViewModel : ObservableObject
 {
-
     private readonly ContactServices _contactServices;
     public ContactAddViewModel(ContactServices contactServices)
     {
@@ -32,11 +31,12 @@ public partial class ContactAddViewModel : ObservableObject
         // Om resultatet är en listan med kontakter
         if (result is List<IContact> list)
         {
-            // Om resultatet innehåller en kontakt med samma mejladress
+            // Om resultatet inte innehåller en kontakt med samma mejladress
             if (list.Any(c => c.Email != Contact.Email))
             {
-                // Om inte, lägg till kontakt i listan
+                // Lägg till kontakt i listan
                 var addResult = _contactServices.AddContact(Contact);
+                Contact = new();
             }
             else
             {

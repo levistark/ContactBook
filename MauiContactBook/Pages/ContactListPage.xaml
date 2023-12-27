@@ -6,10 +6,11 @@
              xmlns:viewmodels="clr-namespace:MauiContactBook.ViewModels"
              x:DataType="{x:Type viewmodels:ContactListViewModel}"
              
+             xmlns:models="clr-namespace:ContactBookLibrary.Models;assembly=ContactBookLibrary"
              Title="ContactListPage"
              Shell.NavBarIsVisible="False">
 
-        <Grid RowDefinitions="auto,auto" Margin="30">
+        <Grid RowDefinitions="auto,*, auto" Margin="30">
 
             <Label 
                 Text="Your Contacts"
@@ -21,17 +22,21 @@
                 Grid.Row="0"/>
                 
 
-            <CollectionView Grid.Row="1">
+            <CollectionView Grid.Row="1" ItemsSource="{Binding Contacts}">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="models:Contact">
                         <Frame>
                             <Grid ColumnDefinitions="*, auto">
-                                <Label Grid.Column="0" Text="..." HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
 
-                            <HorizontalStackLayout>
-                                <Button Text="EDIT" CommandParameter="{Binding .}" Command="{Binding NavigateToEditCommand, Source={RelativeSource AncestorType={x:Type viewmodels:ContactListViewModel}}}" Margin="5"/>
-                                <Button Text="DELETE" CommandParameter="{Binding .}" Command="{Binding RemoveCommand, Source={RelativeSource AncestorType={x:Type viewmodels:ContactListViewModel}}}" Margin="5"/>
-                            </HorizontalStackLayout>
+                                <Grid ColumnDefinitions="auto, auto" Grid.Column="0">
+                                    <Label Grid.Column="0" Text="{Binding FirstName}" VerticalTextAlignment="Center" Margin="0,0,10,0"/>
+                                    <Label Grid.Column="1" Text="{Binding LastName}" VerticalTextAlignment="Center"/>
+                                </Grid>
+
+                            <HorizontalStackLayout Grid.Column="1">
+                                    <Button Text="EDIT" CommandParameter="{Binding .}" Command="{Binding NavigateToEditCommand, Source={RelativeSource AncestorType={x:Type viewmodels:ContactListViewModel}}}" Margin="5"/>
+                                    <Button Text="DELETE" CommandParameter="{Binding .}" Command="{Binding RemoveCommand, Source={RelativeSource AncestorType={x:Type viewmodels:ContactListViewModel}}}" Margin="5"/>
+                                </HorizontalStackLayout>
                             </Grid>
                         </Frame>
                     </DataTemplate>

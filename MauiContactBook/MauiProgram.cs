@@ -36,6 +36,8 @@ namespace MauiContactBook
             builder.Services.AddSingleton<ContactServices>();
             builder.Services.AddSingleton<IFileService, FileService>();
             builder.Services.AddSingleton<MauiViewServices>();
+            builder.Services.AddSingleton<MauiContactServices>();
+
 
             return builder.Build();
         }
