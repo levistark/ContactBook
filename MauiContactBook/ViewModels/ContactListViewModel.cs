@@ -12,13 +12,15 @@ namespace MauiContactBook.ViewModels;
 
 public partial class ContactListViewModel : ObservableObject
 {
-    private readonly ContactServices _contactServices;
     MauiContactServices _mauiContactServices;
-    public ContactListViewModel(ContactServices contactServices, MauiContactServices mauiContactServices)
+    public ContactListViewModel(MauiContactServices mauiContactServices)
     {
-        _contactServices = contactServices;
         _mauiContactServices = mauiContactServices;
-        UpdateContactList();
+        _mauiContactServices.ContactsUpdated += (sender, e) =>
+        {
+            UpdateContactList();
+
+        };
     }
 
     [ObservableProperty]
@@ -31,22 +33,28 @@ public partial class ContactListViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private static async Task NavigateToEdit()
+    private static async Task NavigateToEdit(Contact contact)
     {
-        await Shell.Current.GoToAsync("ContactEditPage");
+        var parameters = new ShellNavigationQueryParameters
+        {
+            {"Contact", contact }
+        };
+
+        await Shell.Current.GoToAsync("ContactEditPage", parameters);
 
     }
 
     [RelayCommand]
-    private void Remove()
+    private void Remove(Contact contact)
     {
-
+        _mauiContactServices.RemoveContactFromList(contact);
+        UpdateContactList();
     }
 
     public void UpdateContactList()
     {
-        var contactList = _contactServices.GetContacts().Result as IEnumerable<IContact>;
-        Contacts = new ObservableCollection<Contact>(contactList!.Cast<Contact>());
+        var list = _mauiContactServices.GetContactsFromList();
+        Contacts = new ObservableCollection<Contact>(list!.Cast<Contact>());
     }
 
 

@@ -25,7 +25,7 @@
             <CollectionView Grid.Row="1" ItemsSource="{Binding Contacts}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:Contact">
-                        <Frame>
+                        <Frame Margin="0,10,0,10">
                             <Grid ColumnDefinitions="*, auto">
 
                                 <Grid ColumnDefinitions="auto, auto" Grid.Column="0">
