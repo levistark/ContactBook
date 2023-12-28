@@ -18,7 +18,7 @@ public class ContactServices : IContactServices
     List<IContact> _contacts = [];
 
     // Filepath som används vid påkallning av FileService-metoder
-    private readonly string filePath = @"C:\VSProjects\content.json";
+    private readonly string filePath = @"C:\VSProjects\ContactBook\content.json";
 
     // DI av FileServices
     private IFileService _fileService;

@@ -32,6 +32,5 @@ public partial class ContactAddViewModel : ObservableObject
         var result = _mauiContactServices.AddContactToList(Contact);
         Contact = new();
         await NavigateToList();
-
     }
 }

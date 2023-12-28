@@ -2,18 +2,18 @@
 using ContactBookLibrary.Interfaces;
 using ContactBookLibrary.Models.Responses;
 using ContactBookLibrary.Services;
+using MauiContactBook.Interfaces;
 using Contact = ContactBookLibrary.Models.Contact;
-
 
 namespace MauiContactBook.Services;
 
-public class MauiContactServices
+public class MauiContactServices : IMauiContactServices
 {
     private readonly ContactServices _contactServices;
 
     public MauiContactServices(ContactServices contactServices)
     {
-        _contactServices = contactServices; 
+        _contactServices = contactServices;
     }
 
     public event EventHandler? ContactsUpdated;
